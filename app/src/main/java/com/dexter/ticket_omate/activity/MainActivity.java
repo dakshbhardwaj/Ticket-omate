@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dexter.ticket_omate.R;
 import com.dexter.ticket_omate.adapters.PassengersAdapter;
@@ -41,20 +42,29 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private BeaconManager beaconManager;
-
+    private PassengersAdapter mPassengersAdapter;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private RecyclerView mPassengerRV;
+    private ArrayList<Passenger> mPassengers;
+    private String mCurrBusStop="";
+
+    private TextView mCurrentStop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // getSupportActionBar().hide(); //<< this
         setContentView(R.layout.activity_main);
+
+        mCurrentStop = findViewById(R.id.curr_Station);
+
+        mPassengers=new ArrayList<>();
         mPassengerRV=findViewById(R.id.passenger_recycler_view);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(MainActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mPassengerRV.setLayoutManager(mLayoutManager);
-        ArrayList<Passenger> mPassengers = new ArrayList<>();
-        mPassengerRV.setAdapter(new PassengersAdapter(mPassengers,MainActivity.this));
+
+        mPassengersAdapter= new PassengersAdapter(mPassengers,MainActivity.this);
+        mPassengerRV.setAdapter(mPassengersAdapter);
 
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
@@ -199,10 +209,12 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
                             if (!confirmMap.containsKey(uuid))
                             {
                                 confirmMap.put(uuid, new Date());
+                                addPassenger(uuid);
+
                                 logToDisplay("PASSENGER ENTRY ID: " + uuid);
                             }
 
-                            map.put(beacon.getId1().toString(), new Date());
+                            map.put(uuid, new Date());
                         }
                         else
                         {
@@ -211,6 +223,8 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
                             if (!uuid.equals(STOPID))
                             {
                                 STOPID = uuid;
+                                setCurrentBusStop(uuid);
+
                                 logToDisplay("BUS STOP ID: " + STOPID);
                             }
 
@@ -241,6 +255,7 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
                         logToDisplay("PASSENGER EXIT ID: " + key + " " + STOPID);
                         confirmMap.remove(key);
                         map.remove(key);
+                        removePassenger(key);
                     }
                 }
 
@@ -252,6 +267,7 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
                     {
                         updateStart(key, STOPID);
                         addedData.add(key);
+                        confirmPassenger(key);
                         logToDisplay("PASSENGER CONFIRMED ID: " + key);
                     }
                 }
@@ -267,7 +283,38 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
 
     String STOPID = "2";
     final String BUSID = "1";
+    private void addPassenger(String uuid){
+        mPassengers.add(new Passenger(uuid,uuid,mCurrBusStop,"",NetUtil.USER_ENTERED));
+        setData();
+    }
+    private void setData(){
+        mPassengersAdapter.setData(mPassengers);
 
+    }
+    private void setCurrentBusStop(String busStop){
+        mCurrBusStop = busStop;
+        mCurrentStop.setText(mCurrBusStop);
+    }
+    private void removePassenger(String uuid){
+        for(int i=0;i<mPassengers.size();i++){
+            Log.d("PassengerRemove",mPassengers.get(i).getBeaconId() + ", " +uuid);
+            if(mPassengers.get(i).getBeaconId().equals(uuid)){
+                Log.d("PassengerRemove","removed");
+                mPassengers.remove(i);
+                break;
+            }
+        }
+        setData();
+    }
+    private void confirmPassenger(String uuid){
+        for(int i=0;i<mPassengers.size();i++){
+            if(mPassengers.get(i).getBeaconId().equals(uuid)){
+                mPassengers.get(i).setStatus(NetUtil.USER_CONFIRMED);
+                break;
+            }
+        }
+        setData();
+    }
     private void updateStart(final String beaconID, final String stopID)
     {
       /*  new Thread(){

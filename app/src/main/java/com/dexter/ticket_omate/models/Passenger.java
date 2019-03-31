@@ -5,12 +5,22 @@ public class Passenger {
     private String mBeaconId;
     private String mStartStationId;
     private String mEndStationId;
+    private String mStatus;
 
-    public Passenger(String name, String beaconId, String startStationId, String endStationId) {
+    public Passenger(String name, String beaconId, String startStationId, String endStationId,String status) {
         mName = name;
         mBeaconId = beaconId;
         mStartStationId = startStationId;
         mEndStationId = endStationId;
+        mStatus = status;
+    }
+
+    public String getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(String status) {
+        mStatus = status;
     }
 
     public String getName() {

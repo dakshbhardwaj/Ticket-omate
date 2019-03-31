@@ -5,19 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".activity.MainActivity">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:cardCornerRadius="6dp"
-        android:elevation="6dp">
+        android:elevation="6dp"
+        android:visibility="gone">
         <EditText
             android:id="@+id/logText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
             android:focusable="false"
             android:ems="10"
             android:gravity="left|top"
@@ -28,6 +28,33 @@
             android:layout_alignParentRight="true">
         </EditText>
     </android.support.v7.widget.CardView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Current Station:"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/curr_Station"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_margin="10dp"
+        android:background="#f4f4f4"
+        />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
 

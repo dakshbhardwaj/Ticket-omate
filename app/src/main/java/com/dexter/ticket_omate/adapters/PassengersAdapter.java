@@ -33,8 +33,13 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Pa
         Passenger passenger= mPassengers.get(i);
         passengerHolder.userName.setText(passenger.getName());
         passengerHolder.startStation.setText(passenger.getStartStationId());
-        passengerHolder.endStation.setText(passenger.getEndStationId());
+        passengerHolder.userStatus.setText(passenger.getStatus());
 
+    }
+
+    public void setData(ArrayList<Passenger> newPassengers){
+        mPassengers = newPassengers;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -45,12 +50,12 @@ public class PassengersAdapter extends RecyclerView.Adapter<PassengersAdapter.Pa
     protected class PassengerHolder extends RecyclerView.ViewHolder{
         TextView userName;
         TextView startStation;
-        TextView endStation;
+        TextView userStatus;
         public PassengerHolder(@NonNull View itemView) {
             super(itemView);
             userName=itemView.findViewById(R.id.user_name);
             startStation = itemView.findViewById(R.id.start_station);
-            endStation = itemView.findViewById(R.id.end_station);
+            userStatus= itemView.findViewById(R.id.user_status);
 
         }
     }
