@@ -9,12 +9,16 @@ import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.dexter.ticket_omate.R;
+import com.dexter.ticket_omate.adapters.PassengersAdapter;
 import com.dexter.ticket_omate.interfaces.VolleyCallback;
+import com.dexter.ticket_omate.models.Passenger;
 import com.dexter.ticket_omate.utility.NetUtil;
 
 import org.altbeacon.beacon.Beacon;
@@ -39,13 +43,18 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
     private BeaconManager beaconManager;
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-
+    private RecyclerView mPassengerRV;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // getSupportActionBar().hide(); //<< this
         setContentView(R.layout.activity_main);
-
+        mPassengerRV=findViewById(R.id.passenger_recycler_view);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(MainActivity.this);
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mPassengerRV.setLayoutManager(mLayoutManager);
+        ArrayList<Passenger> mPassengers = new ArrayList<>();
+        mPassengerRV.setAdapter(new PassengersAdapter(mPassengers,MainActivity.this));
 
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
@@ -226,7 +235,7 @@ public class MainActivity extends AppCompatActivity  implements BeaconConsumer {
                     if (addedData.contains(key))
                     {
                         //create a end request
-                        updateEnd(key, STOPID);
+                        updateEnd(key,STOPID);
                         addedData.remove(key);
 
                         logToDisplay("PASSENGER EXIT ID: " + key + " " + STOPID);
